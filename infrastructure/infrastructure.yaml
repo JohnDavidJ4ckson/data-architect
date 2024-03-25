@@ -1,0 +1,70 @@
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: "10.0.1.0/24"
+      AvailabilityZone: "us-west-2a"
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: "10.0.2.0/24"
+      AvailabilityZone: "us-west-2b"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: my-internet-gateway
+    DependsOn: MyVPC
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  DashboardUsersRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: dashboard-users-role
+      # Define role policies
+
+  DbAdminsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: db-admins-role
+      # Define role policies
+
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-data-bucket
+      # Define bucket properties
+
+  AthenaDatabase:
+    Type: AWS::Glue::Database
+    Properties:
+      DatabaseInput:
+        Name: my-database
+        # Define database properties
+
+  BackendLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: backend-lambda
+      # Define Lambda function properties
+
+  FrontendLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: frontend-lambda
+      # Define Lambda function properties
